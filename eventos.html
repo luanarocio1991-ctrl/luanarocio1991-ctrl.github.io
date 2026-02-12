@@ -12,27 +12,24 @@ body{
     font-family: Arial, sans-serif;
     color:white;
     text-align:center;
-    overflow-x:hidden;
 }
 
-/* BANNER SUPERIOR */
+/* BANNER */
 .top-banner{
     background: linear-gradient(90deg,#00ff88,#00cc66);
     color:#000;
     padding:12px;
     font-weight:bold;
     font-size:18px;
-    letter-spacing:1px;
 }
 
 /* EN VIVO */
-.live-indicator{
-    margin-top:10px;
+.live{
+    margin-top:8px;
     font-size:14px;
     color:#ff3b3b;
 }
-
-.live-dot{
+.dot{
     height:10px;
     width:10px;
     background:red;
@@ -41,7 +38,6 @@ body{
     animation:pulse 1s infinite;
     margin-right:5px;
 }
-
 @keyframes pulse{
     0%{opacity:1;}
     50%{opacity:0.3;}
@@ -59,14 +55,12 @@ body{
     box-shadow:0 0 25px #00ff88;
     background:#000;
 }
-
 .iframe-container{
     position:relative;
     width:100%;
     padding-top:56.25%;
 }
-
-.iframe-container iframe{
+iframe{
     position:absolute;
     top:0;
     left:0;
@@ -76,8 +70,8 @@ body{
     border-radius:10px;
 }
 
-/* BOTONES FLOTANTES */
-.floating-btn{
+/* BOTONES */
+.btn{
     position:fixed;
     right:20px;
     padding:12px 18px;
@@ -91,33 +85,31 @@ body{
     transition:0.3s;
     z-index:999;
 }
+.btn:hover{ transform:scale(1.05); }
 
-.floating-btn:hover{
-    transform:scale(1.05);
-}
+#soundBtn{ bottom:80px; }
+#fullscreenBtn{ bottom:20px; }
 
-#soundBtn{
-    bottom:80px;
-}
-
-#fullscreenBtn{
-    bottom:20px;
+.msg{
+    position:fixed;
+    bottom:140px;
+    right:20px;
+    background:#111;
+    color:#00ff88;
+    padding:10px 15px;
+    border-radius:10px;
     display:none;
+    font-size:13px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="top-banner">
-⚽ GOL LATINO ⚽
-</div>
+<div class="top-banner">⚽ GOL LATINO ⚽</div>
+<div class="live"><span class="dot"></span> EN VIVO</div>
 
-<div class="live-indicator">
-<span class="live-dot"></span> EN VIVO
-</div>
-
-<div class="player-wrapper" id="playerContainer">
+<div class="player-wrapper" id="container">
     <div class="iframe-container">
         <iframe id="player"
         allow="autoplay; fullscreen"
@@ -126,15 +118,12 @@ body{
     </div>
 </div>
 
-<!-- BOTÓN ACTIVAR SONIDO -->
-<button id="soundBtn" class="floating-btn">
-🔊 Activar Volumen
-</button>
+<button id="soundBtn" class="btn">🔊 Activar Sonido</button>
+<button id="fullscreenBtn" class="btn">⛶ Pantalla Completa</button>
 
-<!-- BOTÓN PANTALLA COMPLETA -->
-<button id="fullscreenBtn" class="floating-btn">
-⛶ Pantalla Completa
-</button>
+<div id="msg" class="msg">
+El navegador puede bloquear el sonido automático.
+</div>
 
 <script>
 var params = new URLSearchParams(window.location.search);
@@ -143,47 +132,43 @@ var embed = params.get("r");
 if(embed){
     try{
         var decoded = atob(embed);
+
+        // AUTOPLAY INTENTO
+        if(decoded.includes("?")){
+            decoded += "&autoplay=1";
+        } else {
+            decoded += "?autoplay=1";
+        }
+
         document.getElementById("player").src = decoded;
+
     }catch(e){
         document.body.innerHTML = "<h2>Enlace inválido</h2>";
     }
-}else{
-    document.body.innerHTML = "<h2>No se encontró evento</h2>";
 }
 
-/* ACTIVAR VOLUMEN */
+/* BOTÓN SONIDO */
 document.getElementById("soundBtn").onclick = function(){
-    var iframe = document.getElementById("player");
+    document.getElementById("player").focus();
+    document.getElementById("msg").style.display="block";
 
-    // Recargar intentando autoplay con sonido
-    var currentSrc = iframe.src;
-
-    if(currentSrc.includes("?")){
-        iframe.src = currentSrc + "&autoplay=1";
-    } else {
-        iframe.src = currentSrc + "?autoplay=1";
-    }
-
-    this.style.display = "none";
-    document.getElementById("fullscreenBtn").style.display = "block";
+    setTimeout(function(){
+        document.getElementById("msg").style.display="none";
+    },3000);
 };
 
-/* PANTALLA COMPLETA */
+/* FULLSCREEN */
 document.getElementById("fullscreenBtn").onclick = function(){
-    var elem = document.getElementById("playerContainer");
-
-    if (elem.requestFullscreen) {
-        elem.requestFullscreen();
-    } else if (elem.webkitRequestFullscreen) {
-        elem.webkitRequestFullscreen();
-    } else if (elem.msRequestFullscreen) {
-        elem.msRequestFullscreen();
-    }
+    var elem = document.getElementById("container");
+    if (elem.requestFullscreen) elem.requestFullscreen();
+    else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+    else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
 };
 </script>
 
 </body>
 </html>
+
 
 
 
