@@ -12,6 +12,7 @@ body{
     font-family: Arial, sans-serif;
     color:white;
     text-align:center;
+    overflow-x:hidden;
 }
 
 /* BANNER SUPERIOR */
@@ -75,13 +76,33 @@ body{
     border-radius:10px;
 }
 
-/* BANNER INFERIOR */
-.bottom-banner{
-    padding:15px;
-    font-size:15px;
-    color:#00ff88;
-    border-top:1px solid #00ff88;
-    margin-top:15px;
+/* BOTONES FLOTANTES */
+.floating-btn{
+    position:fixed;
+    right:20px;
+    padding:12px 18px;
+    background:#00ff88;
+    color:#000;
+    border:none;
+    border-radius:30px;
+    font-weight:bold;
+    cursor:pointer;
+    box-shadow:0 0 15px #00ff88;
+    transition:0.3s;
+    z-index:999;
+}
+
+.floating-btn:hover{
+    transform:scale(1.05);
+}
+
+#soundBtn{
+    bottom:80px;
+}
+
+#fullscreenBtn{
+    bottom:20px;
+    display:none;
 }
 </style>
 </head>
@@ -96,7 +117,7 @@ body{
 <span class="live-dot"></span> EN VIVO
 </div>
 
-<div class="player-wrapper">
+<div class="player-wrapper" id="playerContainer">
     <div class="iframe-container">
         <iframe id="player"
         allow="autoplay; fullscreen"
@@ -105,9 +126,15 @@ body{
     </div>
 </div>
 
-<div class="bottom-banner">
-📱 Gira el teléfono para pantalla completa
-</div>
+<!-- BOTÓN ACTIVAR SONIDO -->
+<button id="soundBtn" class="floating-btn">
+🔊 Activar Volumen
+</button>
+
+<!-- BOTÓN PANTALLA COMPLETA -->
+<button id="fullscreenBtn" class="floating-btn">
+⛶ Pantalla Completa
+</button>
 
 <script>
 var params = new URLSearchParams(window.location.search);
@@ -116,26 +143,48 @@ var embed = params.get("r");
 if(embed){
     try{
         var decoded = atob(embed);
-
-        // Agregamos autoplay correctamente
-        if(decoded.includes("?")){
-            decoded += "&autoplay=1";
-        } else {
-            decoded += "?autoplay=1";
-        }
-
         document.getElementById("player").src = decoded;
-
     }catch(e){
         document.body.innerHTML = "<h2>Enlace inválido</h2>";
     }
 }else{
     document.body.innerHTML = "<h2>No se encontró evento</h2>";
 }
+
+/* ACTIVAR VOLUMEN */
+document.getElementById("soundBtn").onclick = function(){
+    var iframe = document.getElementById("player");
+
+    // Recargar intentando autoplay con sonido
+    var currentSrc = iframe.src;
+
+    if(currentSrc.includes("?")){
+        iframe.src = currentSrc + "&autoplay=1";
+    } else {
+        iframe.src = currentSrc + "?autoplay=1";
+    }
+
+    this.style.display = "none";
+    document.getElementById("fullscreenBtn").style.display = "block";
+};
+
+/* PANTALLA COMPLETA */
+document.getElementById("fullscreenBtn").onclick = function(){
+    var elem = document.getElementById("playerContainer");
+
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+    }
+};
 </script>
 
 </body>
 </html>
+
 
 
 
