@@ -1,0 +1,25 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Cargando evento...</title>
+</head>
+<body style="background:#111;color:white;text-align:center;font-family:Arial;">
+
+<h2>Cargando evento...</h2>
+
+<script>
+var params = new URLSearchParams(window.location.search);
+var embed = params.get("r");
+
+if (embed) {
+    var decoded = atob(embed);
+    window.location.href = decoded;
+} else {
+    document.body.innerHTML = "<h2>Enlace no válido</h2>";
+}
+</script>
+
+</body>
+</html>
