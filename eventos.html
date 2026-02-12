@@ -1,13 +1,45 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cargando evento...</title>
-</head>
-<body style="background:#111;color:white;text-align:center;font-family:Arial;">
 
-<h2>Cargando evento...</h2>
+<style>
+body {
+    margin:0;
+    background:#0f0f0f;
+    color:white;
+    font-family:Arial, sans-serif;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.loader {
+    border:5px solid #222;
+    border-top:5px solid #1f6feb;
+    border-radius:50%;
+    width:60px;
+    height:60px;
+    animation:spin 1s linear infinite;
+    margin-top:20px;
+}
+
+@keyframes spin {
+    0% { transform:rotate(0deg); }
+    100% { transform:rotate(360deg); }
+}
+</style>
+</head>
+
+<body>
+
+<h2>🎥 Cargando evento en vivo...</h2>
+<div class="loader"></div>
 
 <script>
 var params = new URLSearchParams(window.location.search);
@@ -15,11 +47,13 @@ var embed = params.get("r");
 
 if (embed) {
     var decoded = atob(embed);
-    window.location.href = decoded;
-} else {
-    document.body.innerHTML = "<h2>Enlace no válido</h2>";
+
+    setTimeout(function() {
+        window.location.href = decoded;
+    }, 1500);
 }
 </script>
 
 </body>
 </html>
+
