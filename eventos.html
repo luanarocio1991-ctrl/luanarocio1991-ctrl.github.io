@@ -2,71 +2,86 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Eventos en Vivo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gol Latino | En Vivo</title>
 
 <style>
-body {
-    margin: 0;
-    background: #0b0f0b;
+body{
+    margin:0;
+    background: radial-gradient(circle at top, #0f1f14, #000);
     font-family: Arial, sans-serif;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    color:white;
+    text-align:center;
 }
 
-/* MENSAJE SUPERIOR */
-.top-banner {
-    width: 100%;
-    background: linear-gradient(90deg, #00ff88, #00cc66);
-    color: #000;
-    text-align: center;
-    padding: 12px;
-    font-weight: bold;
-    font-size: 18px;
-    letter-spacing: 1px;
+/* BANNER SUPERIOR */
+.top-banner{
+    background: linear-gradient(90deg,#00ff88,#00cc66);
+    color:#000;
+    padding:12px;
+    font-weight:bold;
+    font-size:18px;
+    letter-spacing:1px;
 }
 
-/* CONTENEDOR PLAYER */
-.player-wrapper {
-    position: relative;
-    width: 95%;
-    max-width: 1000px;
-    margin: 20px auto;
-    padding: 10px;
-    border: 3px solid #00ff88;
-    border-radius: 15px;
-    box-shadow: 0 0 25px #00ff88;
-    background: #000;
+/* EN VIVO */
+.live-indicator{
+    margin-top:10px;
+    font-size:14px;
+    color:#ff3b3b;
 }
 
-.iframe-container {
-    position: relative;
-    width: 100%;
-    padding-top: 56.25%;
+.live-dot{
+    height:10px;
+    width:10px;
+    background:red;
+    border-radius:50%;
+    display:inline-block;
+    animation:pulse 1s infinite;
+    margin-right:5px;
 }
 
-.iframe-container iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 10px;
-    border: none;
+@keyframes pulse{
+    0%{opacity:1;}
+    50%{opacity:0.3;}
+    100%{opacity:1;}
 }
 
-/* MENSAJE INFERIOR */
-.bottom-banner {
-    width: 100%;
-    background: #111;
-    text-align: center;
-    padding: 15px;
-    font-size: 16px;
-    color: #00ff88;
-    letter-spacing: 1px;
-    border-top: 2px solid #00ff88;
+/* PLAYER */
+.player-wrapper{
+    width:95%;
+    max-width:1000px;
+    margin:20px auto;
+    padding:10px;
+    border:3px solid #00ff88;
+    border-radius:15px;
+    box-shadow:0 0 25px #00ff88;
+    background:#000;
+}
+
+.iframe-container{
+    position:relative;
+    width:100%;
+    padding-top:56.25%;
+}
+
+.iframe-container iframe{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    border:none;
+    border-radius:10px;
+}
+
+/* BANNER INFERIOR */
+.bottom-banner{
+    padding:15px;
+    font-size:15px;
+    color:#00ff88;
+    border-top:1px solid #00ff88;
+    margin-top:15px;
 }
 </style>
 </head>
@@ -77,9 +92,50 @@ body {
 ⚽ GOL LATINO ⚽
 </div>
 
+<div class="live-indicator">
+<span class="live-dot"></span> EN VIVO
+</div>
+
 <div class="player-wrapper">
     <div class="iframe-container">
-        <iframe id="player
+        <iframe id="player"
+        allow="autoplay; fullscreen"
+        allowfullscreen>
+        </iframe>
+    </div>
+</div>
+
+<div class="bottom-banner">
+📱 Gira el teléfono para pantalla completa
+</div>
+
+<script>
+var params = new URLSearchParams(window.location.search);
+var embed = params.get("r");
+
+if(embed){
+    try{
+        var decoded = atob(embed);
+
+        // Agregamos autoplay correctamente
+        if(decoded.includes("?")){
+            decoded += "&autoplay=1";
+        } else {
+            decoded += "?autoplay=1";
+        }
+
+        document.getElementById("player").src = decoded;
+
+    }catch(e){
+        document.body.innerHTML = "<h2>Enlace inválido</h2>";
+    }
+}else{
+    document.body.innerHTML = "<h2>No se encontró evento</h2>";
+}
+</script>
+
+</body>
+</html>
 
 
 
