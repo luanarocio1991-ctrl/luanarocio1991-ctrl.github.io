@@ -667,33 +667,45 @@ function myFunction() {
 </script>
 --------------------------------------
 <script>
-function convertirHora(horaOriginal, zonaDestino){
-    // Crear fecha ficticia con la hora original (formato 24h)
-    const hoy = new Date();
-    const partes = horaOriginal.split(":");
+document.addEventListener("DOMContentLoaded", function() {
 
-    const fecha = new Date(
-        hoy.getFullYear(),
-        hoy.getMonth(),
-        hoy.getDate(),
-        partes[0],
-        partes[1]
-    );
+    // Cambia aquí la zona horaria que quieres forzar
+    const zonaDestino = "America/Lima"; 
+    // Para Colombia usar: "America/Bogota"
 
-    return new Intl.DateTimeFormat("es-PE", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-        timeZone: zonaDestino
-    }).format(fecha);
-}
+    const elementosHora = document.querySelectorAll(".t");
 
-// EJEMPLO
-const horaBase = "18:00"; // hora original
-const zona = "America/Lima"; // Perú
-// const zona = "America/Bogota"; // Colombia
+    elementosHora.forEach(function(el){
 
-document.getElementById("horaEvento").innerText =
-    convertirHora(horaBase, zona);
+        const horaTexto = el.textContent.trim(); // ejemplo "13:15"
+        const partes = horaTexto.split(":");
+
+        if(partes.length === 2){
+
+            const ahora = new Date();
+
+            // Creamos fecha con la hora original
+            const fecha = new Date(
+                ahora.getFullYear(),
+                ahora.getMonth(),
+                ahora.getDate(),
+                parseInt(partes[0]),
+                parseInt(partes[1])
+            );
+
+            const horaConvertida = new Intl.DateTimeFormat("es-PE", {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+                timeZone: zonaDestino
+            }).format(fecha);
+
+            el.textContent = horaConvertida;
+        }
+
+    });
+
+});
 </script>
+
 	
