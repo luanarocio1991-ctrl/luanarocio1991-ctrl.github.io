@@ -665,3 +665,35 @@ function myFunction() {
   }
 }
 </script>
+--------------------------------------
+<script>
+function convertirHora(horaOriginal, zonaDestino){
+    // Crear fecha ficticia con la hora original (formato 24h)
+    const hoy = new Date();
+    const partes = horaOriginal.split(":");
+
+    const fecha = new Date(
+        hoy.getFullYear(),
+        hoy.getMonth(),
+        hoy.getDate(),
+        partes[0],
+        partes[1]
+    );
+
+    return new Intl.DateTimeFormat("es-PE", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+        timeZone: zonaDestino
+    }).format(fecha);
+}
+
+// EJEMPLO
+const horaBase = "18:00"; // hora original
+const zona = "America/Lima"; // Perú
+// const zona = "America/Bogota"; // Colombia
+
+document.getElementById("horaEvento").innerText =
+    convertirHora(horaBase, zona);
+</script>
+	
