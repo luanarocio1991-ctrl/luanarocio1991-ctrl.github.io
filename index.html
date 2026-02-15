@@ -667,24 +667,22 @@ function myFunction() {
 </script>
 --------------------------------------
 <script>
-document.addEventListener("DOMContentLoaded", function() {
+window.addEventListener("load", function() {
 
-    // Cambia aquí la zona horaria que quieres forzar
     const zonaDestino = "America/Lima"; 
-    // Para Colombia usar: "America/Bogota"
+    // Para Colombia usa: "America/Bogota"
 
     const elementosHora = document.querySelectorAll(".t");
 
     elementosHora.forEach(function(el){
 
-        const horaTexto = el.textContent.trim(); // ejemplo "13:15"
+        const horaTexto = el.textContent.trim();
         const partes = horaTexto.split(":");
 
         if(partes.length === 2){
 
             const ahora = new Date();
 
-            // Creamos fecha con la hora original
             const fecha = new Date(
                 ahora.getFullYear(),
                 ahora.getMonth(),
@@ -707,6 +705,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 });
 </script>
+
 
 
 	
