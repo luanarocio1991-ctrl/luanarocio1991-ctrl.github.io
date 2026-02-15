@@ -667,44 +667,39 @@ function myFunction() {
 </script>
 --------------------------------------
 <script>
-window.addEventListener("load", function() {
+document.addEventListener("DOMContentLoaded", function () {
 
-    const zonaDestino = "America/Lima"; 
-    // Para Colombia usa: "America/Bogota"
+    // 🔧 CONFIGURA AQUÍ
+    // Horario original del listado (ejemplo: España = +1)
+    const zonaOrigen = 1;
 
-    const elementosHora = document.querySelectorAll(".t");
+    // Horario destino
+    // Perú / Colombia = -5
+    const zonaDestino = -5;
 
-    elementosHora.forEach(function(el){
+    const diferencia = zonaDestino - zonaOrigen;
 
-        const horaTexto = el.textContent.trim();
-        const partes = horaTexto.split(":");
+    document.querySelectorAll(".t").forEach(function(el) {
 
-        if(partes.length === 2){
+        const texto = el.textContent.trim();
+        if(!texto.includes(":")) return;
 
-            const ahora = new Date();
+        let [h, m] = texto.split(":").map(Number);
 
-            const fecha = new Date(
-                ahora.getFullYear(),
-                ahora.getMonth(),
-                ahora.getDate(),
-                parseInt(partes[0]),
-                parseInt(partes[1])
-            );
+        h = h + diferencia;
 
-            const horaConvertida = new Intl.DateTimeFormat("es-PE", {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: false,
-                timeZone: zonaDestino
-            }).format(fecha);
+        if (h < 0) h += 24;
+        if (h >= 24) h -= 24;
 
-            el.textContent = horaConvertida;
-        }
+        el.textContent =
+            String(h).padStart(2, "0") + ":" +
+            String(m).padStart(2, "0");
 
     });
 
 });
 </script>
+
 
 
 
