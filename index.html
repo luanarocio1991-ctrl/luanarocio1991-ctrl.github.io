@@ -132,7 +132,7 @@ minute:'2-digit'
 
 }
 
-/* abrir links */
+/* abrir lista de canales */
 
 function toggle(id){
 
@@ -193,7 +193,22 @@ if(embed){
 
 let urlOriginal = embed.attributes.embed_iframe;
 
-/* pasa por eventos.html pero sin modificar link original */
+/* extraer src si viene iframe */
+
+if(urlOriginal.includes("iframe")){
+let match = urlOriginal.match(/src="([^"]+)"/);
+if(match){
+urlOriginal = match[1];
+}
+}
+
+/* si es ruta relativa agregar dominio */
+
+if(urlOriginal.startsWith("/")){
+urlOriginal = "https://la14hd.com" + urlOriginal;
+}
+
+/* crear link hacia tu player */
 
 let urlPlayer = "https://luanarocio1991-ctrl.github.io/eventos.html?r=" + btoa(urlOriginal);
 
@@ -220,7 +235,7 @@ document.getElementById("agenda").innerHTML=html;
 fechaHoy();
 cargarAgenda();
 
-/* actualizar agenda automáticamente */
+/* actualizar cada minuto */
 
 setInterval(cargarAgenda,60000);
 
