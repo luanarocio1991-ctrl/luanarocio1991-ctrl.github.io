@@ -2,13 +2,14 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agenda Deportiva</title>
 
 <style>
 
 body{
 font-family: Arial;
-background:#f2f2f2;
+background:#f3f4f6;
 padding:20px;
 }
 
@@ -21,15 +22,32 @@ overflow:hidden;
 }
 
 .partido{
+padding:12px;
+border-bottom:1px solid #ddd;
+cursor:pointer;
+}
+
+.info{
 display:flex;
 gap:10px;
-padding:10px;
-border-bottom:1px solid #ddd;
 }
 
 .hora{
 font-weight:bold;
 width:60px;
+}
+
+.links{
+display:none;
+padding:10px 20px;
+background:#fafafa;
+}
+
+.links a{
+display:block;
+padding:6px;
+text-decoration:none;
+color:#2563eb;
 }
 
 </style>
@@ -43,33 +61,75 @@ width:60px;
 
 <script>
 
+function convertirHora(hora){
+
+let date = new Date(hora);
+
+return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+}
+
 fetch("https://goolhd.com/agenda.json?v=1.03")
-.then(res => res.json())
-.then(data => {
+.then(res=>res.json())
+.then(data=>{
 
 let html="";
 
-data.data.forEach(evento=>{
+data.data.forEach((evento,i)=>{
 
-html += `
-<div class="partido">
+let hora = evento.attributes.diary_hour.substring(0,5);
+let descripcion = evento.attributes.diary_description;
 
-<div class="hora">
-${evento.attributes.diary_hour.substring(0,5)}
+html+=`
+
+<div class="partido" onclick="toggle(${i})">
+
+<div class="info">
+
+<div class="hora">${hora}</div>
+
+<div>${descripcion}</div>
+
 </div>
 
-<div>
-${evento.attributes.diary_description}
-</div>
-
-</div>
+<div class="links" id="links${i}">
 `;
+
+evento.attributes.embeds.data.forEach(embed=>{
+
+if(embed){
+
+html+=`
+
+<a href="${embed.attributes.embed_iframe}" target="_blank">
+▶ ${embed.attributes.embed_name}
+</a>
+
+`;
+
+}
+
+});
+
+html+=`</div></div>`;
 
 });
 
 document.getElementById("agenda").innerHTML = html;
 
 });
+
+function toggle(id){
+
+let el = document.getElementById("links"+id);
+
+if(el.style.display=="block"){
+el.style.display="none";
+}else{
+el.style.display="block";
+}
+
+}
 
 </script>
 
