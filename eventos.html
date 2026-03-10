@@ -40,11 +40,53 @@ margin-top:20px;
 
 <script>
 
-/* bloquear popups antes de redirigir */
+/* BLOQUEO DE POPUPS */
 
-window.open=function(){
+const originalOpen = window.open;
+
+window.open = function(url,name,features){
+
+let win = null;
+
+try{
+win = originalOpen.call(window,url,name,features);
+}catch(e){}
+
+if(win){
+setTimeout(()=>{
+try{ win.close(); }catch(e){}
+},100);
+}
+
 return null;
+
 };
+
+/* bloquear enlaces que intenten abrir nueva pestaña */
+
+document.addEventListener("click",function(e){
+
+let link = e.target.closest("a");
+
+if(link && link.target === "_blank"){
+e.preventDefault();
+}
+
+},true);
+
+/* bloquear primer clic que activa anuncios */
+
+let primerClick = true;
+
+document.addEventListener("click",function(e){
+
+if(primerClick){
+primerClick=false;
+e.stopPropagation();
+e.preventDefault();
+}
+
+},true);
 
 </script>
 
@@ -57,12 +99,12 @@ return null;
 
 <script>
 
-const params=new URLSearchParams(window.location.search);
-let embed=params.get("r");
+const params = new URLSearchParams(window.location.search);
+let embed = params.get("r");
 
 if(embed){
 
-let url=atob(embed).trim();
+let url = atob(embed).trim();
 
 /* corregir urls */
 
@@ -81,7 +123,7 @@ url="https://"+url;
 /* redirigir al stream */
 
 setTimeout(()=>{
-location.href=url;
+location.replace(url);
 },1200);
 
 }
