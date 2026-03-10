@@ -195,7 +195,39 @@ setInterval(cargarAgenda,60000);
 </body>
 </html>
 --------------------------------------
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
+    // 🔧 CONFIGURA AQUÍ
+    // Horario original del listado (ejemplo: España = +1)
+    const zonaOrigen = 1;
+
+    // Horario destino
+    // Perú / Colombia = -5
+    const zonaDestino = -5;
+
+    const diferencia = zonaDestino - zonaOrigen;
+
+    document.querySelectorAll(".t").forEach(function(el) {
+
+        const texto = el.textContent.trim();
+        if(!texto.includes(":")) return;
+
+        let [h, m] = texto.split(":").map(Number);
+
+        h = h + diferencia;
+
+        if (h < 0) h += 24;
+        if (h >= 24) h -= 24;
+
+        el.textContent =
+            String(h).padStart(2, "0") + ":" +
+            String(m).padStart(2, "0");
+
+    });
+
+});
+</script>
 
 
 
