@@ -3,34 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Agenda Deportiva</title>
 
 <style>
 
 body{
-font-family: Arial;
-background:#f3f4f6;
+font-family:Arial;
+background:#0f172a;
+color:#e5e7eb;
 padding:20px;
+}
+
+.titulo{
+text-align:center;
+font-size:22px;
+margin-bottom:20px;
 }
 
 #agenda{
 max-width:750px;
 margin:auto;
-background:white;
-border-radius:8px;
+background:#1e293b;
+border-radius:10px;
 overflow:hidden;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
+box-shadow:0 10px 20px rgba(0,0,0,0.4);
 }
 
 .partido{
-border-bottom:1px solid #eee;
+padding:14px;
+border-bottom:1px solid #334155;
 cursor:pointer;
-padding:12px;
-transition:background 0.2s;
+transition:background .2s;
 }
 
 .partido:hover{
-background:#f9fafb;
+background:#334155;
 }
 
 .info{
@@ -40,36 +48,35 @@ gap:10px;
 }
 
 .hora{
-font-weight:bold;
 width:60px;
-color:#111;
+font-weight:bold;
+color:#38bdf8;
 }
 
 .bandera{
-width:20px;
-height:20px;
+width:22px;
+height:22px;
 border-radius:50%;
 }
 
 .descripcion{
 font-weight:600;
-color:#333;
 }
 
 .links{
 display:none;
 padding:10px 20px;
-background:#fafafa;
+background:#020617;
 }
 
 .links a{
 display:block;
-padding:8px;
-margin:5px 0;
 background:#2563eb;
+padding:8px;
+margin:6px 0;
+border-radius:6px;
 color:white;
 text-decoration:none;
-border-radius:5px;
 font-size:14px;
 }
 
@@ -77,39 +84,63 @@ font-size:14px;
 background:#1d4ed8;
 }
 
-.titulo{
-font-size:20px;
-margin-bottom:15px;
-text-align:center;
-}
-
 </style>
 
 </head>
 <body>
 
-<div class="titulo">Agenda Deportiva</div>
+<div class="titulo">⚽ Agenda Deportiva</div>
 
 <div id="agenda"></div>
 
 <script>
 
-fetch("https://goolhd.com/agenda.json?v=1.03")
-.then(res=>res.json())
-.then(data=>{
+const API="https://goolhd.com/agenda.json?v=1.03";
+
+function convertirHora(utc){
+
+let date = new Date(utc);
+
+return date.toLocaleTimeString([],{
+hour:'2-digit',
+minute:'2-digit'
+});
+
+}
+
+function toggle(id){
+
+let el=document.getElementById("links"+id);
+
+if(el.style.display==="block"){
+el.style.display="none";
+}else{
+el.style.display="block";
+}
+
+}
+
+async function cargarAgenda(){
+
+let res=await fetch(API);
+let data=await res.json();
 
 let html="";
 
-data.data.forEach((evento,i)=>{
+data.data
+.filter(e=>e.attributes.deportes.toLowerCase()=="futbol")
+.sort((a,b)=>a.attributes.diary_hour.localeCompare(b.attributes.diary_hour))
+.forEach((evento,i)=>{
 
-let hora = evento.attributes.diary_hour.substring(0,5);
+let hora=convertirHora(evento.attributes.diary_hour);
 
-let descripcion = evento.attributes.diary_description;
+let desc=evento.attributes.diary_description;
 
-let bandera = "https://img.goolhd.com/uploads/sin_imagen_d36205f0e8.png";
+let bandera="https://img.goolhd.com/uploads/sin_imagen_d36205f0e8.png";
 
 if(evento.attributes.country.data){
-bandera="https://img.goolhd.com"+evento.attributes.country.data.attributes.image.data.attributes.url;
+bandera="https://img.goolhd.com"+
+evento.attributes.country.data.attributes.image.data.attributes.url;
 }
 
 html+=`
@@ -122,7 +153,7 @@ html+=`
 
 <img class="bandera" src="${bandera}">
 
-<div class="descripcion">${descripcion}</div>
+<div class="descripcion">${desc}</div>
 
 </div>
 
@@ -149,21 +180,15 @@ html+=`</div></div>`;
 
 });
 
-document.getElementById("agenda").innerHTML = html;
-
-});
-
-function toggle(id){
-
-let el=document.getElementById("links"+id);
-
-if(el.style.display=="block"){
-el.style.display="none";
-}else{
-el.style.display="block";
-}
+document.getElementById("agenda").innerHTML=html;
 
 }
+
+cargarAgenda();
+
+/* actualizar cada minuto */
+
+setInterval(cargarAgenda,60000);
 
 </script>
 
