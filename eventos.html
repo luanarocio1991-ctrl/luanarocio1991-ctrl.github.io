@@ -4,26 +4,21 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Evento en vivo</title>
+
+<title>Cargando evento...</title>
 
 <style>
 
 body{
 margin:0;
-background:#000;
+background:#0f0f0f;
 color:white;
 font-family:Arial;
-height:100vh;
-display:flex;
-align-items:center;
-justify-content:center;
-}
-
-#loader{
-position:absolute;
 display:flex;
 flex-direction:column;
+justify-content:center;
 align-items:center;
+height:100vh;
 }
 
 .loader{
@@ -41,18 +36,11 @@ margin-top:20px;
 100%{transform:rotate(360deg)}
 }
 
-#player{
-width:100%;
-height:100vh;
-border:none;
-display:none;
-}
-
 </style>
 
 <script>
 
-/* bloquear popups */
+/* bloquear popups antes de redirigir */
 
 window.open=function(){
 return null;
@@ -64,15 +52,8 @@ return null;
 
 <body>
 
-<div id="loader">
 <h2>🎥 Cargando evento en vivo...</h2>
 <div class="loader"></div>
-</div>
-
-<iframe id="player"
-allowfullscreen
-sandbox="allow-scripts allow-same-origin allow-forms"
-></iframe>
 
 <script>
 
@@ -97,14 +78,10 @@ if(!url.startsWith("http")){
 url="https://"+url;
 }
 
-/* cargar dentro del iframe */
+/* redirigir al stream */
 
 setTimeout(()=>{
-
-document.getElementById("player").src=url;
-document.getElementById("player").style.display="block";
-document.getElementById("loader").style.display="none";
-
+location.href=url;
 },1200);
 
 }
