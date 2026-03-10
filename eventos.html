@@ -47,19 +47,25 @@ let embed = params.get("r");
 
 if(embed){
 
-let url = atob(embed);
+let url = atob(embed).trim();
 
-/* si la url no tiene http agregar https */
+/* si el enlace ya tiene http lo usamos */
 
-if(!url.startsWith("http")){
-url = "https://" + url.replace(/^\/+/,"");
+if(url.startsWith("http")){
+window.location.href = url;
 }
 
-/* redirigir */
+/* si empieza con / es un enlace relativo */
 
-setTimeout(()=>{
-window.location.href = url;
-},1200);
+else if(url.startsWith("/")){
+window.location.href = "https://la14hd.com" + url;
+}
+
+/* si no tiene nada */
+
+else{
+window.location.href = "https://" + url;
+}
 
 }
 
