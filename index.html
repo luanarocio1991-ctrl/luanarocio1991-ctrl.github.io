@@ -159,9 +159,20 @@ if(match) url=match[1];
 
 url=url.trim();
 
-/* evitar enlaces embed rotos */
+/* quitar rutas embed rotas */
 
 url=url.replace("/embed/eventos.html","");
+
+/* evitar doble base64 */
+
+if(url.includes("?r=")){
+let parts=url.split("?r=");
+if(parts[1]){
+try{
+url=atob(parts[1]);
+}catch(e){}
+}
+}
 
 /* protocolo */
 
@@ -232,10 +243,12 @@ if(embed){
 
 let urlOriginal=limpiarURL(embed.attributes.embed_iframe);
 
-let urlPlayer="https://luanarocio1991-ctrl.github.io/eventos.html?r="+btoa(urlOriginal);
+/* enviar al reproductor */
+
+let urlPlayer="https://luanarocio1991-ctrl.github.io/eventos.html?r="+encodeURIComponent(btoa(urlOriginal));
 
 html+=`
-<a href="${urlPlayer}" target="_self">
+<a href="${urlPlayer}">
 ▶ ${embed.attributes.embed_name}
 </a>
 `;
@@ -263,7 +276,7 @@ document.getElementById("agenda").innerHTML="Error cargando eventos";
 fechaHoy();
 cargarAgenda();
 
-/* actualizar cada minuto */
+/* actualizar agenda */
 
 setInterval(cargarAgenda,60000);
 
