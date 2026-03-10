@@ -82,8 +82,8 @@ font-size:14px;
 }
 
 </style>
-
 </head>
+
 <body>
 
 <div class="titulo">⚽ Agenda</div>
@@ -113,7 +113,7 @@ hoy.toLocaleDateString('es-ES',opciones);
 
 }
 
-/* convertir hora automática */
+/* convertir hora */
 
 function convertirHora(hora){
 
@@ -144,7 +144,7 @@ el.style.display==="block" ? "none":"block";
 
 }
 
-/* limpiar URL */
+/* limpiar URL del iframe */
 
 function limpiarURL(url){
 
@@ -157,17 +157,19 @@ let match=url.match(/src="([^"]+)"/);
 if(match) url=match[1];
 }
 
-/* quitar espacios */
-
 url=url.trim();
 
-/* si empieza con // */
+/* evitar enlaces embed rotos */
+
+url=url.replace("/embed/eventos.html","");
+
+/* protocolo */
 
 if(url.startsWith("//")){
 url="https:"+url;
 }
 
-/* si empieza con / */
+/* ruta relativa */
 
 if(url.startsWith("/")){
 url="https://la14hd.com"+url;
@@ -200,7 +202,6 @@ data.data
 .forEach((evento,i)=>{
 
 let hora=convertirHora(evento.attributes.diary_hour);
-
 let desc=evento.attributes.diary_description;
 
 let bandera="https://img.goolhd.com/uploads/sin_imagen_d36205f0e8.png";
@@ -217,13 +218,9 @@ html+=`
 <div class="partido" onclick="toggle(${i})">
 
 <div class="info">
-
 <div class="hora">${hora}</div>
-
 <img class="bandera" src="${bandera}">
-
 <div>${desc}</div>
-
 </div>
 
 <div class="links" id="links${i}">
@@ -234,8 +231,6 @@ evento.attributes.embeds.data.forEach(embed=>{
 if(embed){
 
 let urlOriginal=limpiarURL(embed.attributes.embed_iframe);
-
-/* link hacia tu reproductor */
 
 let urlPlayer="https://luanarocio1991-ctrl.github.io/eventos.html?r="+btoa(urlOriginal);
 
@@ -268,7 +263,7 @@ document.getElementById("agenda").innerHTML="Error cargando eventos";
 fechaHoy();
 cargarAgenda();
 
-/* actualizar agenda */
+/* actualizar cada minuto */
 
 setInterval(cargarAgenda,60000);
 
