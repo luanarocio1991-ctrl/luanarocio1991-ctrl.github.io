@@ -18,6 +18,12 @@ padding:20px;
 .titulo{
 text-align:center;
 font-size:22px;
+margin-bottom:10px;
+}
+
+.fecha{
+text-align:center;
+color:#94a3b8;
 margin-bottom:20px;
 }
 
@@ -27,14 +33,12 @@ margin:auto;
 background:#1e293b;
 border-radius:10px;
 overflow:hidden;
-box-shadow:0 10px 20px rgba(0,0,0,0.4);
 }
 
 .partido{
 padding:14px;
 border-bottom:1px solid #334155;
 cursor:pointer;
-transition:background .2s;
 }
 
 .partido:hover{
@@ -59,10 +63,6 @@ height:22px;
 border-radius:50%;
 }
 
-.descripcion{
-font-weight:600;
-}
-
 .links{
 display:none;
 padding:10px 20px;
@@ -80,16 +80,13 @@ text-decoration:none;
 font-size:14px;
 }
 
-.links a:hover{
-background:#1d4ed8;
-}
-
 </style>
 
 </head>
 <body>
 
-<div class="titulo">⚽ Agenda Deportiva</div>
+<div class="titulo">⚽ Agenda</div>
+<div class="fecha" id="fecha"></div>
 
 <div id="agenda"></div>
 
@@ -97,9 +94,36 @@ background:#1d4ed8;
 
 const API="https://goolhd.com/agenda.json?v=1.03";
 
-function convertirHora(utc){
+/* fecha automática */
 
-let date = new Date(utc);
+function fechaHoy(){
+
+let hoy=new Date();
+
+let opciones={
+weekday:'long',
+year:'numeric',
+month:'long',
+day:'numeric'
+};
+
+document.getElementById("fecha").innerText=
+hoy.toLocaleDateString('es-ES',opciones);
+
+}
+
+/* convertir hora correctamente */
+
+function convertirHora(hora){
+
+if(!hora) return "";
+
+let h=hora.split(":");
+
+let date=new Date();
+
+date.setHours(h[0]);
+date.setMinutes(h[1]);
 
 return date.toLocaleTimeString([],{
 hour:'2-digit',
@@ -108,17 +132,18 @@ minute:'2-digit'
 
 }
 
+/* abrir links */
+
 function toggle(id){
 
 let el=document.getElementById("links"+id);
 
-if(el.style.display==="block"){
-el.style.display="none";
-}else{
-el.style.display="block";
-}
+el.style.display=
+el.style.display==="block" ? "none":"block";
 
 }
+
+/* cargar agenda */
 
 async function cargarAgenda(){
 
@@ -139,8 +164,10 @@ let desc=evento.attributes.diary_description;
 let bandera="https://img.goolhd.com/uploads/sin_imagen_d36205f0e8.png";
 
 if(evento.attributes.country.data){
+
 bandera="https://img.goolhd.com"+
 evento.attributes.country.data.attributes.image.data.attributes.url;
+
 }
 
 html+=`
@@ -153,7 +180,7 @@ html+=`
 
 <img class="bandera" src="${bandera}">
 
-<div class="descripcion">${desc}</div>
+<div>${desc}</div>
 
 </div>
 
@@ -165,11 +192,9 @@ evento.attributes.embeds.data.forEach(embed=>{
 if(embed){
 
 html+=`
-
 <a href="${embed.attributes.embed_iframe}" target="_blank">
 ▶ ${embed.attributes.embed_name}
 </a>
-
 `;
 
 }
@@ -184,6 +209,9 @@ document.getElementById("agenda").innerHTML=html;
 
 }
 
+/* iniciar */
+
+fechaHoy();
 cargarAgenda();
 
 /* actualizar cada minuto */
