@@ -3,73 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Evento en vivo</title>
-
-<style>
-body{
-margin:0;
-background:#000;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-font-family:Arial;
-}
-
-#player{
-width:100%;
-height:100vh;
-border:none;
-}
-
-.loader{
-position:absolute;
-color:white;
-font-size:18px;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-}
-</style>
-</head>
-
-<body>
-
-<div class="loader">🎥 Cargando evento...</div>
-
-<iframe id="player" allowfullscreen allow="autoplay; encrypted-media"></iframe>
-
-<script>
-
-const params=new URLSearchParams(window.location.search);
-let embed=params.get("r");
-
-if(embed){
-
-let url=atob(embed).trim();
-
-/* corregir urls */
-
-if(url.startsWith("//")){
-url="https:"+url;
-}
-
-if(url.startsWith("/")){
-url="https://la14hd.com"+url;
-}
-
-document.getElementById("player").src=url;
-
-}
-
-</script>
-
-</body>
-</html><!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cargando evento...</title>
 
 <style>
@@ -100,8 +33,8 @@ margin-top:20px;
 100%{transform:rotate(360deg)}
 }
 </style>
-</head>
 
+</head>
 <body>
 
 <h2>🎥 Cargando evento en vivo...</h2>
@@ -109,30 +42,32 @@ margin-top:20px;
 
 <script>
 
-const params = new URLSearchParams(window.location.search);
-let embed = params.get("r");
+const params=new URLSearchParams(window.location.search);
+let embed=params.get("r");
 
 if(embed){
 
-let url = atob(embed).trim();
+let url=atob(embed).trim();
 
-/* si el enlace ya tiene http lo usamos */
+/* corregir urls */
 
-if(url.startsWith("http")){
-window.location.href = url;
+if(url.startsWith("//")){
+url="https:"+url;
 }
 
-/* si empieza con / es un enlace relativo */
-
-else if(url.startsWith("/")){
-window.location.href = "https://la14hd.com" + url;
+if(url.startsWith("/")){
+url="https://la14hd.com"+url;
 }
 
-/* si no tiene nada */
-
-else{
-window.location.href = "https://" + url;
+if(!url.startsWith("http")){
+url="https://"+url;
 }
+
+/* redirección */
+
+setTimeout(()=>{
+window.location.replace(url);
+},1200);
 
 }
 
