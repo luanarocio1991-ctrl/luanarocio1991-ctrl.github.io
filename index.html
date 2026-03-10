@@ -112,7 +112,7 @@ hoy.toLocaleDateString('es-ES',opciones);
 
 }
 
-/* convertir hora correctamente */
+/* convertir hora según país */
 
 function convertirHora(hora){
 
@@ -191,8 +191,14 @@ evento.attributes.embeds.data.forEach(embed=>{
 
 if(embed){
 
+let urlOriginal = embed.attributes.embed_iframe;
+
+/* pasa por eventos.html pero sin modificar link original */
+
+let urlPlayer = "https://luanarocio1991-ctrl.github.io/eventos.html?r=" + btoa(urlOriginal);
+
 html+=`
-<a href="${embed.attributes.embed_iframe}" target="_blank">
+<a href="${urlPlayer}" target="_blank">
 ▶ ${embed.attributes.embed_name}
 </a>
 `;
@@ -214,7 +220,7 @@ document.getElementById("agenda").innerHTML=html;
 fechaHoy();
 cargarAgenda();
 
-/* actualizar cada minuto */
+/* actualizar agenda automáticamente */
 
 setInterval(cargarAgenda,60000);
 
