@@ -2,101 +2,27 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agenda Deportiva</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<style>
+<link rel="stylesheet" href="css/style.css">
 
-body{
-font-family: Arial;
-background:#0f172a;
-color:white;
-margin:0;
-padding:20px;
-}
-
-h1{
-text-align:center;
-}
-
-#agenda{
-max-width:800px;
-margin:auto;
-}
-
-.partido{
-background:#1e293b;
-padding:15px;
-margin:10px 0;
-border-radius:10px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.hora{
-font-size:18px;
-font-weight:bold;
-color:#38bdf8;
-}
-
-.equipos{
-font-size:16px;
-}
-
-.canal{
-background:#22c55e;
-padding:5px 10px;
-border-radius:6px;
-font-size:14px;
-}
-
-</style>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/3.4.4/luxon.min.js"></script>
+<script src="js/index.js" type="module"></script>
 
 </head>
+
 <body>
 
-<h1>⚽ Agenda de Eventos Deportivos</h1>
+<div id="wraper">
 
-<div id="agenda"></div>
-
-<script>
-
-fetch("agenda.json")
-.then(res => res.json())
-.then(data => {
-
-let html="";
-
-data.forEach(partido=>{
-
-html+=`
-
-<div class="partido">
-
-<div class="hora">
-${partido.hora}
+<div class="agenda-header">
+<h2 id="title-agenda"></h2>
 </div>
 
-<div class="equipos">
-${partido.local} vs ${partido.visitante}
-</div>
-
-<div class="canal">
-${partido.canal}
-</div>
+<ul id="menu"></ul>
 
 </div>
-
-`;
-
-});
-
-document.getElementById("agenda").innerHTML=html;
-
-});
-
-</script>
 
 </body>
 </html>
