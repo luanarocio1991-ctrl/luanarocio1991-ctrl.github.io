@@ -2,27 +2,76 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agenda Deportiva</title>
 
-<link rel="stylesheet" href="css/style.css">
+<style>
 
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/3.4.4/luxon.min.js"></script>
-<script src="js/index.js" type="module"></script>
+body{
+font-family: Arial;
+background:#f2f2f2;
+padding:20px;
+}
+
+#agenda{
+max-width:700px;
+margin:auto;
+background:white;
+border-radius:8px;
+overflow:hidden;
+}
+
+.partido{
+display:flex;
+gap:10px;
+padding:10px;
+border-bottom:1px solid #ddd;
+}
+
+.hora{
+font-weight:bold;
+width:60px;
+}
+
+</style>
 
 </head>
-
 <body>
 
-<div id="wraper">
+<h2>Agenda Deportiva</h2>
 
-<div class="agenda-header">
-<h2 id="title-agenda"></h2>
+<div id="agenda"></div>
+
+<script>
+
+fetch("https://goolhd.com/agenda.json?v=1.03")
+.then(res => res.json())
+.then(data => {
+
+let html="";
+
+data.data.forEach(evento=>{
+
+html += `
+<div class="partido">
+
+<div class="hora">
+${evento.attributes.diary_hour.substring(0,5)}
 </div>
 
-<ul id="menu"></ul>
+<div>
+${evento.attributes.diary_description}
+</div>
 
 </div>
+`;
+
+});
+
+document.getElementById("agenda").innerHTML = html;
+
+});
+
+</script>
 
 </body>
 </html>
