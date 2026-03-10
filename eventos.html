@@ -2,6 +2,73 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evento en vivo</title>
+
+<style>
+body{
+margin:0;
+background:#000;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+font-family:Arial;
+}
+
+#player{
+width:100%;
+height:100vh;
+border:none;
+}
+
+.loader{
+position:absolute;
+color:white;
+font-size:18px;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+}
+</style>
+</head>
+
+<body>
+
+<div class="loader">🎥 Cargando evento...</div>
+
+<iframe id="player" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+
+<script>
+
+const params=new URLSearchParams(window.location.search);
+let embed=params.get("r");
+
+if(embed){
+
+let url=atob(embed).trim();
+
+/* corregir urls */
+
+if(url.startsWith("//")){
+url="https:"+url;
+}
+
+if(url.startsWith("/")){
+url="https://la14hd.com"+url;
+}
+
+document.getElementById("player").src=url;
+
+}
+
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cargando evento...</title>
 
