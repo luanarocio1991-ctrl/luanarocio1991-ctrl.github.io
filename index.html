@@ -13,6 +13,7 @@ font-family:Arial;
 background:#0f172a;
 color:#e5e7eb;
 padding:20px;
+margin:0;
 }
 
 .titulo{
@@ -88,7 +89,7 @@ font-size:14px;
 <div class="titulo">⚽ Agenda</div>
 <div class="fecha" id="fecha"></div>
 
-<div id="agenda"></div>
+<div id="agenda">Cargando eventos...</div>
 
 <script>
 
@@ -112,7 +113,7 @@ hoy.toLocaleDateString('es-ES',opciones);
 
 }
 
-/* convertir hora según país */
+/* convertir hora automática */
 
 function convertirHora(hora){
 
@@ -143,7 +144,7 @@ el.style.display==="block" ? "none":"block";
 
 }
 
-/* limpiar url del embed */
+/* limpiar URL */
 
 function limpiarURL(url){
 
@@ -185,6 +186,8 @@ return url;
 /* cargar agenda */
 
 async function cargarAgenda(){
+
+try{
 
 let res=await fetch(API);
 let data=await res.json();
@@ -232,12 +235,12 @@ if(embed){
 
 let urlOriginal=limpiarURL(embed.attributes.embed_iframe);
 
-/* enviar a tu player */
+/* link hacia tu reproductor */
 
 let urlPlayer="https://luanarocio1991-ctrl.github.io/eventos.html?r="+btoa(urlOriginal);
 
 html+=`
-<a href="${urlPlayer}" target="_blank">
+<a href="${urlPlayer}" target="_self">
 ▶ ${embed.attributes.embed_name}
 </a>
 `;
@@ -252,249 +255,11 @@ html+=`</div></div>`;
 
 document.getElementById("agenda").innerHTML=html;
 
-}
+}catch(e){
 
-/* iniciar */
-
-fechaHoy();
-cargarAgenda();
-
-/* actualizar cada minuto */
-
-setInterval(cargarAgenda,60000);
-
-</script>
-
-</body>
-</html><!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Agenda Deportiva</title>
-
-<style>
-
-body{
-font-family:Arial;
-background:#0f172a;
-color:#e5e7eb;
-padding:20px;
-}
-
-.titulo{
-text-align:center;
-font-size:22px;
-margin-bottom:10px;
-}
-
-.fecha{
-text-align:center;
-color:#94a3b8;
-margin-bottom:20px;
-}
-
-#agenda{
-max-width:750px;
-margin:auto;
-background:#1e293b;
-border-radius:10px;
-overflow:hidden;
-}
-
-.partido{
-padding:14px;
-border-bottom:1px solid #334155;
-cursor:pointer;
-}
-
-.partido:hover{
-background:#334155;
-}
-
-.info{
-display:flex;
-align-items:center;
-gap:10px;
-}
-
-.hora{
-width:60px;
-font-weight:bold;
-color:#38bdf8;
-}
-
-.bandera{
-width:22px;
-height:22px;
-border-radius:50%;
-}
-
-.links{
-display:none;
-padding:10px 20px;
-background:#020617;
-}
-
-.links a{
-display:block;
-background:#2563eb;
-padding:8px;
-margin:6px 0;
-border-radius:6px;
-color:white;
-text-decoration:none;
-font-size:14px;
-}
-
-</style>
-
-</head>
-<body>
-
-<div class="titulo">⚽ Agenda</div>
-<div class="fecha" id="fecha"></div>
-
-<div id="agenda"></div>
-
-<script>
-
-const API="https://goolhd.com/agenda.json?v=1.03";
-
-/* fecha automática */
-
-function fechaHoy(){
-
-let hoy=new Date();
-
-let opciones={
-weekday:'long',
-year:'numeric',
-month:'long',
-day:'numeric'
-};
-
-document.getElementById("fecha").innerText=
-hoy.toLocaleDateString('es-ES',opciones);
+document.getElementById("agenda").innerHTML="Error cargando eventos";
 
 }
-
-/* convertir hora según país */
-
-function convertirHora(hora){
-
-if(!hora) return "";
-
-let h=hora.split(":");
-
-let date=new Date();
-
-date.setHours(h[0]);
-date.setMinutes(h[1]);
-
-return date.toLocaleTimeString([],{
-hour:'2-digit',
-minute:'2-digit'
-});
-
-}
-
-/* abrir lista de canales */
-
-function toggle(id){
-
-let el=document.getElementById("links"+id);
-
-el.style.display=
-el.style.display==="block" ? "none":"block";
-
-}
-
-/* cargar agenda */
-
-async function cargarAgenda(){
-
-let res=await fetch(API);
-let data=await res.json();
-
-let html="";
-
-data.data
-.filter(e=>e.attributes.deportes.toLowerCase()=="futbol")
-.sort((a,b)=>a.attributes.diary_hour.localeCompare(b.attributes.diary_hour))
-.forEach((evento,i)=>{
-
-let hora=convertirHora(evento.attributes.diary_hour);
-
-let desc=evento.attributes.diary_description;
-
-let bandera="https://img.goolhd.com/uploads/sin_imagen_d36205f0e8.png";
-
-if(evento.attributes.country.data){
-
-bandera="https://img.goolhd.com"+
-evento.attributes.country.data.attributes.image.data.attributes.url;
-
-}
-
-html+=`
-
-<div class="partido" onclick="toggle(${i})">
-
-<div class="info">
-
-<div class="hora">${hora}</div>
-
-<img class="bandera" src="${bandera}">
-
-<div>${desc}</div>
-
-</div>
-
-<div class="links" id="links${i}">
-`;
-
-evento.attributes.embeds.data.forEach(embed=>{
-
-if(embed){
-
-let urlOriginal = embed.attributes.embed_iframe;
-
-/* extraer src si viene iframe */
-
-if(urlOriginal.includes("iframe")){
-let match = urlOriginal.match(/src="([^"]+)"/);
-if(match){
-urlOriginal = match[1];
-}
-}
-
-/* si es ruta relativa agregar dominio */
-
-if(urlOriginal.startsWith("/")){
-urlOriginal = "https://la14hd.com" + urlOriginal;
-}
-
-/* crear link hacia tu player */
-
-let urlPlayer = "https://luanarocio1991-ctrl.github.io/eventos.html?r=" + btoa(urlOriginal);
-
-html+=`
-<a href="${urlPlayer}" target="_blank">
-▶ ${embed.attributes.embed_name}
-</a>
-`;
-
-}
-
-});
-
-html+=`</div></div>`;
-
-});
-
-document.getElementById("agenda").innerHTML=html;
 
 }
 
@@ -503,7 +268,7 @@ document.getElementById("agenda").innerHTML=html;
 fechaHoy();
 cargarAgenda();
 
-/* actualizar cada minuto */
+/* actualizar agenda */
 
 setInterval(cargarAgenda,60000);
 
