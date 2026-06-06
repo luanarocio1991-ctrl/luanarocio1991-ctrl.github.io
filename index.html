@@ -215,12 +215,36 @@ data.data
 let hora=convertirHora(evento.attributes.diary_hour);
 let desc=evento.attributes.diary_description;
 
-let bandera="https://img.fubolazo.com/uploads/sin_imagen_d36205f0e8.png";
+let bandera =
+"https://img.fubolazo.com/uploads/sin_imagen_d36205f0e8.png";
 
-if(evento.attributes.country.data){
+/* validar imagen del país */
 
-bandera="https://img.fubolazo.com"+
+if(
+evento.attributes.country &&
+evento.attributes.country.data &&
+evento.attributes.country.data.attributes &&
+evento.attributes.country.data.attributes.image &&
+evento.attributes.country.data.attributes.image.data &&
+evento.attributes.country.data.attributes.image.data.attributes
+){
+
+let rutaImagen =
 evento.attributes.country.data.attributes.image.data.attributes.url;
+
+/* si ya viene url completa */
+if(rutaImagen.startsWith("http")){
+
+bandera = rutaImagen;
+
+}else{
+
+/* construir url correcta */
+bandera = "https://img.fubolazo.com" + rutaImagen;
+
+}
+
+}
 
 }
 
@@ -230,7 +254,9 @@ html+=`
 
 <div class="info">
 <div class="hora">${hora}</div>
-<img class="bandera" src="${bandera}">
+<img class="bandera"
+src="${bandera}"
+onerror="this.src='https://img.fubolazo.com/uploads/sin_imagen_d36205f0e8.png'">
 <div>${desc}</div>
 </div>
 
