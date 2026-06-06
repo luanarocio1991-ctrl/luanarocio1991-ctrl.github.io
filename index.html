@@ -62,7 +62,6 @@ color:#38bdf8;
 width:22px;
 height:22px;
 border-radius:50%;
-object-fit:cover;
 }
 
 .links{
@@ -94,23 +93,22 @@ font-size:14px;
 
 <script>
 
-const API="https://agenda18.com/agenda.json?v=1.12";
+const API="https://futbollibregol.pe/js/config.js?v=1.03";
 
 /* fecha automática */
 
 function fechaHoy(){
 
-let hoy = new Date();
+let hoy=new Date();
 
-let opciones = {
+let opciones={
 weekday:'long',
 year:'numeric',
 month:'long',
-day:'numeric',
-timeZone:'America/Lima'
+day:'numeric'
 };
 
-document.getElementById("fecha").innerText =
+document.getElementById("fecha").innerText=
 hoy.toLocaleDateString('es-ES',opciones);
 
 }
@@ -121,17 +119,16 @@ function convertirHora(hora){
 
 if(!hora) return "";
 
-let h = hora.split(":");
+let h=hora.split(":");
 
-let date = new Date();
+let date=new Date();
 
 date.setHours(h[0]);
 date.setMinutes(h[1]);
 
-return date.toLocaleTimeString('es-PE',{
+return date.toLocaleTimeString([],{
 hour:'2-digit',
-minute:'2-digit',
-timeZone:'America/Lima'
+minute:'2-digit'
 });
 
 }
@@ -205,68 +202,36 @@ async function cargarAgenda(){
 
 try{
 
-let res = await fetch(API);
-let data = await res.json();
+let res=await fetch(API);
+let data=await res.json();
 
-let html = "";
+let html="";
 
 data.data
-.filter(e => e.attributes.deportes.toLowerCase()=="futbol")
-.sort((a,b)=>
-a.attributes.diary_hour.localeCompare(
-b.attributes.diary_hour
-))
+.filter(e=>e.attributes.deportes.toLowerCase()=="futbol")
+.sort((a,b)=>a.attributes.diary_hour.localeCompare(b.attributes.diary_hour))
 .forEach((evento,i)=>{
 
-let hora = convertirHora(evento.attributes.diary_hour);
-let desc = evento.attributes.diary_description;
+let hora=convertirHora(evento.attributes.diary_hour);
+let desc=evento.attributes.diary_description;
 
-/* LOGO CORREGIDO */
+let bandera="https://img.goolhd.com/uploads/sin_imagen_d36205f0e8.png";
 
-let bandera =
-"https://img.fubolazo.com/uploads/sin_imagen_d36205f0e8.png";
+if(evento.attributes.country.data){
 
-if(
-evento.attributes.country &&
-evento.attributes.country.data &&
-evento.attributes.country.data.attributes &&
-evento.attributes.country.data.attributes.image &&
-evento.attributes.country.data.attributes.image.data &&
-evento.attributes.country.data.attributes.image.data.attributes
-){
-
-let rutaImagen =
-evento.attributes.country.data.attributes
-.image.data.attributes.url;
-
-/* si ya viene completa */
-if(rutaImagen.startsWith("http")){
-
-bandera = rutaImagen;
-
-}else{
-
-bandera =
-"https://img.fubolazo.com" + rutaImagen;
+bandera="https://img.goolhd.com"+
+evento.attributes.country.data.attributes.image.data.attributes.url;
 
 }
 
-}
-
-html += `
+html+=`
 
 <div class="partido" onclick="toggle(${i})">
 
 <div class="info">
-
 <div class="hora">${hora}</div>
-
-<img class="bandera"
-src="${bandera}"
-onerror="this.src='https://img.fubolazo.com/uploads/sin_imagen_d36205f0e8.png'">
-
+<img class="bandera" src="${bandera}">
 <div>${desc}</div>
-
 </div>
 
 <div class="links" id="links${i}">
@@ -276,16 +241,13 @@ evento.attributes.embeds.data.forEach(embed=>{
 
 if(embed){
 
-let urlOriginal =
-limpiarURL(embed.attributes.embed_iframe);
+let urlOriginal=limpiarURL(embed.attributes.embed_iframe);
 
 /* enviar al reproductor */
 
-let urlPlayer =
-"https://luanarocio1991-ctrl.github.io/eventos.html?r="
-+ encodeURIComponent(btoa(urlOriginal));
+let urlPlayer="https://luanarocio1991-ctrl.github.io/eventos.html?r="+encodeURIComponent(btoa(urlOriginal));
 
-html += `
+html+=`
 <a href="${urlPlayer}">
 ▶ ${embed.attributes.embed_name}
 </a>
@@ -295,18 +257,15 @@ html += `
 
 });
 
-html += `</div></div>`;
+html+=`</div></div>`;
 
 });
 
-document.getElementById("agenda").innerHTML = html;
+document.getElementById("agenda").innerHTML=html;
 
 }catch(e){
 
-document.getElementById("agenda").innerHTML =
-"Error cargando eventos";
-
-console.error(e);
+document.getElementById("agenda").innerHTML="Error cargando eventos";
 
 }
 
@@ -325,8 +284,37 @@ setInterval(cargarAgenda,60000);
 
 </body>
 </html>
+--------------------------------------
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
+    // 🔧 CONFIGURA AQUÍ
+    // Horario original del listado (ejemplo: España = +1)
+    const zonaOrigen = 1;
 
+    // Horario destino
+    // Perú / Colombia = -5
+    const zonaDestino = -5;
 
+    const diferencia = zonaDestino - zonaOrigen;
 
-	
+    document.querySelectorAll(".t").forEach(function(el) {
+
+        const texto = el.textContent.trim();
+        if(!texto.includes(":")) return;
+
+        let [h, m] = texto.split(":").map(Number);
+
+        h = h + diferencia;
+
+        if (h < 0) h += 24;
+        if (h >= 24) h -= 24;
+
+        el.textContent =
+            String(h).padStart(2, "0") + ":" +
+            String(m).padStart(2, "0");
+
+    });
+
+});
+</script>
